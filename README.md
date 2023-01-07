@@ -14,8 +14,8 @@
 | birth_day          | date      | null: false                    |
 
 ## Association
-- has_many :items, dependent: :destroy
-- has_many :orders, dependent: :destroy
+- has_many :items
+- has_many :orders
 
 
 
@@ -28,14 +28,14 @@
 | price              | integer   | null: false                    |
 | condition_id       | intege    | null: false                    |
 | cost_id            | integer   | null: false                    |
-| days_id            | integer   | null: false                    |
+| scheduled_day_id   | integer   | null: false                    |
 | prefecture_id      | integer   | null: false                    |
 | category_id        | integer   | null: false                    |
 | user               | reference | null: false, foreign_key: true |
 
 ## Association
 - belongs_to :user
-- has_one :order, dependent: :destroy
+- has_one :order
 
 
 
@@ -50,10 +50,10 @@
 ## Association
 - belongs_to :user
 - belongs_to :item
-- has_one :shipping_address, dependent: :destroy
+- has_one :address
 
 
-## shipping_addresses テーブル
+## addresses テーブル
 
 | Column             | Type      | Options                        |
 | ------------------ | ----------| ------------------------------ |
