@@ -8,17 +8,22 @@ RSpec.describe User, type: :model do
         email: email, 
         password: password, 
         password_confirmation: password_confirmation, 
-        birth_day: "2001-1-11", 
-        family_name: "竈門",
-        first_name: "炭治郎",
-        family_name_kana: "カマド",
-        first_name_kana: "タンジロウ"
+        birth_day: birth_day, 
+        family_name: family_name,
+        first_name: first_name,
+        family_name_kana: family_name_kana,
+        first_name_kana: first_name_kana
       )
     }
-    let(:nickname){"タロウ"}
-    let(:email){"alice@sample.com"}
-    let(:password){"1234hanako"}
-    let(:password_confirmation){"1234hanako"}
+    let(:nickname){"ギユウ"}
+    let(:email){"shinobu@sample.com"}
+    let(:password){"1234kanroji"}
+    let(:password_confirmation){"1234kanroji"}
+    let(:family_name){"宇髄"}
+    let(:first_name){"天元"}
+    let(:family_name_kana){"ウズイ"}
+    let(:first_name_kana){"テンゲン"}
+    let(:birth_day){"2010-12-24"}
     describe "nickname" do
       context "入力値が存在しない場合" do
         let(:nickname){""}
@@ -45,7 +50,7 @@ RSpec.describe User, type: :model do
         end
       end
       context "入力値に@が存在しない場合" do
-        let(:email){"alice.com"}
+        let(:email){"kimetsu.com"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
         end
@@ -108,6 +113,119 @@ RSpec.describe User, type: :model do
         let(:password_confirmation){"124mete"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
+        end
+      end
+    end
+    describe "family_name" do
+      context "入力値が存在しない場合" do
+        let(:family_name){""}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "入力値が存在する場合" do
+        it "trueが返ってくる" do
+          expect(user.valid?).to be_truthy
+        end
+      end
+      context "名字が全角でない場合" do
+        let(:family_name){"ｼﾅｽﾞｶﾞﾜ"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "名字が全角英字の場合" do
+        let(:family_name){"ｓｈｉｎａｚｕｇａｗａ"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+    end
+    describe "first_name" do
+      context "入力値が存在しない場合" do
+        let(:first_name){""}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "入力値が存在する場合" do
+        it "trueが返ってくる" do
+          expect(user.valid?).to be_truthy
+        end
+      end
+      context "名前が全角でない場合" do
+        let(:first_name){"ﾃﾝｹﾞﾝ"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "名前が全角英字の場合" do
+        let(:first_name){"ｔｅｎｇｅｎ"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+    end
+    describe "family_name_kana" do
+      context "入力値が存在しない場合" do
+        let(:family_name_kana){""}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "入力値が存在する場合" do
+        it "trueが返ってくる" do
+          expect(user.valid?).to be_truthy
+        end
+      end
+      context "名字のカナが全角でない場合" do
+        let(:family_name_kana){"ｳｽﾞｲ"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "名字のカナがカタカナでない場合" do
+        let(:family_name_kana){"うずい"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+    end
+    describe "first_name_kana" do
+      context "入力値が存在しない場合" do
+        let(:first_name_kana){""}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "入力値が存在する場合" do
+        it "trueが返ってくる" do
+          expect(user.valid?).to be_truthy
+        end
+      end
+      context "名前のカナが全角でない場合" do
+        let(:first_name_kana){"ﾃﾝｹﾞﾝ"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "名前のカナがカタカナでない場合" do
+        let(:first_name_kana){"てんげん"}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+    end
+    describe "birth_day" do
+      context "入力値が存在しない場合" do
+        let(:birth_day){""}
+        it "falseが返ってくる" do
+          expect(user.valid?).to be_falsey
+        end
+      end
+      context "入力値が存在する場合" do
+        it "trueが返ってくる" do
+          expect(user.valid?).to be_truthy
         end
       end
     end
