@@ -153,7 +153,7 @@ RSpec.describe User, type: :model do
           expect(user.valid?).to be_truthy
         end
       end
-      context "名前が全角でない場合" do
+      context "名前が半角カナの場合" do
         let(:first_name){"ﾃﾝｹﾞﾝ"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
@@ -178,13 +178,13 @@ RSpec.describe User, type: :model do
           expect(user.valid?).to be_truthy
         end
       end
-      context "名字のカナが全角でない場合" do
+      context "名字のカナが半角カナの場合" do
         let(:family_name_kana){"ｳｽﾞｲ"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
         end
       end
-      context "名字のカナがカタカナでない場合" do
+      context "名字のカナがひらがなでない場合" do
         let(:family_name_kana){"うずい"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
@@ -203,13 +203,13 @@ RSpec.describe User, type: :model do
           expect(user.valid?).to be_truthy
         end
       end
-      context "名前のカナが全角でない場合" do
+      context "名前のカナが半角カナの場合" do
         let(:first_name_kana){"ﾃﾝｹﾞﾝ"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
         end
       end
-      context "名前のカナがカタカナでない場合" do
+      context "名前のカナがひらがなの場合" do
         let(:first_name_kana){"てんげん"}
         it "falseが返ってくる" do
           expect(user.valid?).to be_falsey
