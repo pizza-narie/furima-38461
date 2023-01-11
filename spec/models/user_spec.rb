@@ -1,232 +1,138 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  describe "validations" do 
-    let(:user){
-      User.new(
-        nickname: nickname, 
-        email: email, 
-        password: password, 
-        password_confirmation: password_confirmation, 
-        birth_day: birth_day, 
-        family_name: family_name,
-        first_name: first_name,
-        family_name_kana: family_name_kana,
-        first_name_kana: first_name_kana
-      )
-    }
-    let(:nickname){"ギユウ"}
-    let(:email){"shinobu@sample.com"}
-    let(:password){"1234kanroji"}
-    let(:password_confirmation){"1234kanroji"}
-    let(:family_name){"宇髄"}
-    let(:first_name){"天元"}
-    let(:family_name_kana){"ウズイ"}
-    let(:first_name_kana){"テンゲン"}
-    let(:birth_day){"2010-12-24"}
-    describe "nickname" do
-      context "入力値が存在しない場合" do
-        let(:nickname){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
-      end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+  before do
+    @user = FactoryBot.build(:user)
+  end
+
+  describe 'ユーザー新規登録' do 
+    context '新規登録できる時' do
+      it 'nickname、email、passwordとpassword_confirmation、family_name、first_name、family_name_kana、first_name_kana、birth_dayが存在すれば登録できる' do
+        expect(@user).to be_valid
       end
     end
-    describe "email" do
-      context "入力値が存在しない場合" do
-        let(:email){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+    context '新規登録できない時' do
+      it 'nicknameの値が存在しない場合' do
+        @user.nickname = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Nickname can't be blank")
       end
-      context "正しい値の場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+      it 'emailの値が存在しない場合' do
+        @user.email = ""
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Email can't be blank")
       end
-      context "入力値に@が存在しない場合" do
-        let(:email){"kimetsu.com"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'emailの値に@が存在しない場合' do
+        @user.email = 'tanjirou.com'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Email is invalid")
       end
-      context "入力値が重複している場合" do
-        before do
-          User.create!(
-            nickname: "ネズコ", 
-            email: email, 
-            password: "00000nezuko", 
-            password_confirmation: "00000nezuko", 
-            birth_day: "2001-1-12", 
-            family_name: "我妻",
-            first_name: "善逸",
-            family_name_kana: "アガツマ",
-            first_name_kana: "ゼンイツ"
-          )
-        end
-        let(:email){"nezuko@sample.com"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'emailの値が重複している場合' do
+        @user.save
+        another_user = FactoryBot.build(:user)
+        another_user.email = @user.email
+        another_user.valid?
+        expect(another_user.errors.full_messages).to include("Email has already been taken")
       end
-    end
-    describe "password" do
-      context "入力値が存在しない場合" do
-        let(:password){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'passwordの値が存在しない場合' do
+        @user.password = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password can't be blank")  
       end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+      it 'passwordとpassword_confirmationが不一致では登録できない' do
+        @user.password = 'tanjirou021'
+        @user.password_confirmation = 'tanjirou01'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password confirmation doesn't match Password")
       end
-      context "5文字以下の場合" do
-        let(:password){"123oi"}
-        let(:password_confirmation){"123oi"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'passwordが5文字以下の場合' do
+        @user.password = '1147'
+        @user.password_confirmation = '1147'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password is too short (minimum is 6 characters)")
       end
-      context "半角英字のみの場合" do
-        let(:password){"oioioi"}
-        let(:password_confirmation){"oioioi"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'passwordが半角英字のみの場合' do
+        @user.password = 'tanjirou'
+        @user.password_confirmation = 'tanjirou'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password には英字と数字の両方を含めて設定してください")
       end
-      context "半角数字のみの場合" do
-        let(:password){"123456"}
-        let(:password_confirmation){"123456"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'passwordが半角数字のみの場合' do
+        @user.password = '20100824'
+        @user.password_confirmation = '20100824'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password には英字と数字の両方を含めて設定してください")
       end
-      context "値が異なる場合" do
-        let(:password){"123kuou"}
-        let(:password_confirmation){"124mete"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'passwordとpassword_confirmationの値が異なる場合' do
+        @user.password = 'tanjirou021'
+        @user.password_confirmation = 'tanjirou0101'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Password confirmation doesn't match Password")
       end
-    end
-    describe "family_name" do
-      context "入力値が存在しない場合" do
-        let(:family_name){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'family_nameの値が存在しない場合' do
+        @user.family_name = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name can't be blank")  
       end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+      it 'family_nameが半角の場合' do
+        @user.family_name = 'ｶﾏﾄﾞ'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name は全角で入力してください")  
       end
-      context "名字が全角でない場合" do
-        let(:family_name){"ｼﾅｽﾞｶﾞﾜ"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'family_nameが全角英字の場合' do
+        @user.family_name = 'ｋａｍａｄｏ'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name は全角で入力してください")  
       end
-      context "名字が全角英字の場合" do
-        let(:family_name){"ｓｈｉｎａｚｕｇａｗａ"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'first_nameの値が存在しない場合' do
+        @user.first_name = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name can't be blank")  
       end
-    end
-    describe "first_name" do
-      context "入力値が存在しない場合" do
-        let(:first_name){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'first_nameが半角の場合' do
+        @user.first_name = 'ﾀﾝｼﾞﾛｳ'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name は全角で入力してください")  
       end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+      it 'first_nameが全角英字の場合' do
+        @user.first_name = 'ｋａｍａｄｏ'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name は全角で入力してください") 
       end
-      context "名前が半角カナの場合" do
-        let(:first_name){"ﾃﾝｹﾞﾝ"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'family_name_kanaの値が存在しない場合' do
+        @user.family_name_kana = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name kana can't be blank")  
       end
-      context "名前が全角英字の場合" do
-        let(:first_name){"ｔｅｎｇｅｎ"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'family_name_kanaが半角カナの場合' do
+        @user.family_name_kana = 'ﾄﾐｵｶ'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name kana は全角カナで入力してください") 
       end
-    end
-    describe "family_name_kana" do
-      context "入力値が存在しない場合" do
-        let(:family_name_kana){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'family_name_kanaが全角ひらがなの場合' do
+        @user.family_name_kana = 'とみおか'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name kana は全角カナで入力してください") 
       end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+      it 'first_name_kanaの値が存在しない場合' do
+        @user.first_name_kana = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name kana can't be blank")  
       end
-      context "名字のカナが半角カナの場合" do
-        let(:family_name_kana){"ｳｽﾞｲ"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'first_name_kanaが半角カナの場合' do
+        @user.family_name_kana = 'ｷﾞﾕｳ'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Family name kana は全角カナで入力してください") 
       end
-      context "名字のカナがひらがなでない場合" do
-        let(:family_name_kana){"うずい"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
+      it 'first_name_kanaが全角ひらがなの場合' do
+        @user.first_name_kana = 'ぎゆう'
+        @user.valid?
+        expect(@user.errors.full_messages).to include("First name kana は全角カナで入力してください") 
       end
-    end
-    describe "first_name_kana" do
-      context "入力値が存在しない場合" do
-        let(:first_name_kana){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
-      end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
-      end
-      context "名前のカナが半角カナの場合" do
-        let(:first_name_kana){"ﾃﾝｹﾞﾝ"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
-      end
-      context "名前のカナがひらがなの場合" do
-        let(:first_name_kana){"てんげん"}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
-      end
-    end
-    describe "birth_day" do
-      context "入力値が存在しない場合" do
-        let(:birth_day){""}
-        it "falseが返ってくる" do
-          expect(user.valid?).to be_falsey
-        end
-      end
-      context "入力値が存在する場合" do
-        it "trueが返ってくる" do
-          expect(user.valid?).to be_truthy
-        end
+      it 'birth_dayの値が存在しない場合' do
+        @user.birth_day = ''
+        @user.valid?
+        expect(@user.errors.full_messages).to include("Birth day can't be blank")  
       end
     end
   end
