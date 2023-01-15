@@ -26,7 +26,7 @@
 | name               | string    | null: false                    |
 | description        | text      | null: false                    |
 | price              | integer   | null: false                    |
-| condition_id       | intege    | null: false                    |
+| condition_id       | integer    | null: false                    |
 | cost_id            | integer   | null: false                    |
 | scheduled_day_id   | integer   | null: false                    |
 | prefecture_id      | integer   | null: false                    |
