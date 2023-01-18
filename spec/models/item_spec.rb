@@ -52,8 +52,18 @@ RSpec.describe Item, type: :model do
         @item.valid?
         expect(@item.errors.full_messages).to include("Condition Select")
       end
+      it '「商品の状態」の値が「----」を選択されている場合' do
+        @item. condition_id= "1"
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Condition Select")
+      end
       it '「配送料の負担」の値が存在しない場合' do
         @item.cost_id = ""
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Cost Select")
+      end
+      it '「配送料の負担」の値が「----」を選択されている場合' do
+        @item.cost_id = "1"
         @item.valid?
         expect(@item.errors.full_messages).to include("Cost Select")
       end
@@ -62,8 +72,18 @@ RSpec.describe Item, type: :model do
         @item.valid?
         expect(@item.errors.full_messages).to include("Scheduled day Select")
       end
-      it '「発送までの日数」の値が存在しない場合' do
+      it '「発送までの日数」の値が「----」を選択されている場合' do
+        @item.scheduled_day_id = "1"
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Scheduled day Select")
+      end
+      it '「発送元の地域」の値が存在しない場合' do
         @item.prefecture_id = ""
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Prefecture Select")
+      end
+      it '「発送元の地域」の値が「----」を選択されている場合' do
+        @item.prefecture_id = "1"
         @item.valid?
         expect(@item.errors.full_messages).to include("Prefecture Select")
       end
@@ -71,6 +91,16 @@ RSpec.describe Item, type: :model do
         @item.category_id = ""
         @item.valid?
         expect(@item.errors.full_messages).to include("Category Select")
+      end
+      it '「カテゴリー」の値が「----」を選択されている場合' do
+        @item.category_id = "1"
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Category Select")
+      end
+      it 'ユーザーが紐付いていなければ投稿できない' do
+        @item.user = nil
+        @item.valid?
+        expect(@item.errors.full_messages).to include('User must exist')
       end
     end
   end

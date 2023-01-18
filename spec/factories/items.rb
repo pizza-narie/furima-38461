@@ -11,8 +11,8 @@ FactoryBot.define do
 
     user
 
-    after(:build) do |message|
-      message.image.attach(io: File.open('public/test_images/a.jpg'), filename: 'a.jpg')
+    after(:build) do |item_image|
+      item_image.image.attach(io: File.open('public/test_images/a.jpg'), filename: 'a.jpg')
     end
 
   end
