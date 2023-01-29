@@ -8,11 +8,10 @@ FactoryBot.define do
     scheduled_day_id  {2}
     prefecture_id     {2}
     category_id       {3}
-
-    user
+    association :user
 
     after(:build) do |item_image|
-      item_image.image.attach(io: File.open('public/test_images/a.jpg'), filename: 'a.jpg')
+        item_image.image.attach(io: File.open('public/test_images/a.jpg'), filename: 'a.jpg')
     end
 
   end
