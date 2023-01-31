@@ -24,7 +24,7 @@ RSpec.describe OrderForm, type: :model do
         it '郵便番号の値が存在しない時' do
           @order.post_code = ""
           @order.valid?
-          expect(@order.errors.full_messages).to include("Post code can't be blank", "Post code  Enter it as follows (e.g. 123-4567)")
+          expect(@order.errors.full_messages).to include("Post code can't be blank")
         end
         it '郵便番号の値が「3桁ハイフン4桁」の半角文字列でない場合' do
           @order.post_code = "5032-204"
@@ -39,7 +39,7 @@ RSpec.describe OrderForm, type: :model do
         it '都道府県の値が存在しない場合' do
           @order.prefecture_id = ""
           @order.valid?
-          expect(@order.errors.full_messages).to include("Prefecture can't be blank", "Prefecture Select")
+          expect(@order.errors.full_messages).to include("Prefecture can't be blank")
         end
         it'都道府県の値が「----」の場合' do
           @order.prefecture_id = "1"
@@ -64,17 +64,17 @@ RSpec.describe OrderForm, type: :model do
         it '電話番号の値に「-」がある場合' do
           @order.telephone = "080-3922-8832"
           @order.valid?
-          expect(@order.errors.full_messages).to include("Telephone 11桁以内の数字を入力してください")
+          expect(@order.errors.full_messages).to include("Telephone 10桁以上11桁以内の半角数字を入力してください")
         end
         it '電話番号の値が半角数字12桁以上の場合' do
           @order.telephone = "008039228832"
           @order.valid?
-          expect(@order.errors.full_messages).to include("Telephone 11桁以内の数字を入力してください")
+          expect(@order.errors.full_messages).to include("Telephone 10桁以上11桁以内の半角数字を入力してください")
         end
         it '電話番号の値が数字以外の場合' do
           @order.telephone = "082a35d3202"
           @order.valid?
-          expect(@order.errors.full_messages).to include("Telephone 11桁以内の数字を入力してください")
+          expect(@order.errors.full_messages).to include("Telephone 10桁以上11桁以内の半角数字を入力してください")
         end
         it 'ユーザー情報が紐づいていない場合' do
           @order.user_id = nil
@@ -90,9 +90,14 @@ RSpec.describe OrderForm, type: :model do
           @order.token = nil
           @order.valid?
           expect(@order.errors.full_messages).to include("Token can't be blank")
+        end
+        it '電話番号の値が9桁以下では登録できない' do
+          @order.telephone = "082043808"
+          @order.valid?
+          expect(@order.errors.full_messages).to include("Telephone 10桁以上11桁以内の半角数字を入力してください")
+        end
       end
     end
   end
-end
 
 
